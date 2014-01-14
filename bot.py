@@ -6,8 +6,8 @@ DOMRE = re.compile('\.\w{2,20}')
 FOOTER = '''
 
 *****
-[IsItDownBot](http://reddit.com/u/IsItDownBot) \
-bot by [Jammie1](http://reddit.com/u/Jammie1)
+[IsItDownBot](https://github.com/JamieMagee/IsItDownBot) \
+by [Jammie1](http://reddit.com/u/Jammie1)
 '''
 
 def exit_handler():
@@ -103,8 +103,7 @@ r.login(username, password)
 print '[*] Login successful...\n'
 
 while True:
-  subreddit = r.get_subreddit('jammie1+test')
-  subreddit_comments = subreddit.get_comments()
+  subreddit_comments = r.get_comments('all')
   print '[*] Getting comments...\n'
 
   for comment in subreddit_comments:

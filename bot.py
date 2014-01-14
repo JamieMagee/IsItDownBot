@@ -1,4 +1,4 @@
-import praw, urllib2, re, cgi, ConfigParser, time
+import praw, urllib2, re, cgi, ConfigParser, time, os
 
 HTTPRE = re.compile('http[s]?:\/\/', re.IGNORECASE)
 DOMRE = re.compile('\.\w{2,20}')
@@ -49,10 +49,15 @@ class Url:
 
 r = praw.Reddit('/u/IsItDownBot by /u/Jammie1')
 
-config = ConfigParser.ConfigParser()
-config.read('settings.cfg')
-username = config.get('auth', 'username')
-password = config.get('auth', 'password')
+if os.path.isfile('settings.cfg'):
+  config = ConfigParser.ConfigParser()
+  config.read('settings.cfg')
+  username = config.get('auth', 'username')
+  password = config.get('auth', 'password')
+else:
+  username = os.environ['REDDIT_USERNAME']
+  password = os.environ['REDDIT_PASSWORD']
+
 print '[*] Logging in as %s...' % username
 r.login(username, password)
 print '[*] Login successful...\n'

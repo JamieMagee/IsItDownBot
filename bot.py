@@ -103,7 +103,7 @@ r.login(username, password)
 print '[*] Login successful...\n'
 
 while True:
-  subreddit = r.get_subreddit('jammie1+test+botwatch')
+  subreddit = r.get_subreddit('all')
   subreddit_comments = subreddit.get_comments()
 
   print '[*] Getting comments...\n'

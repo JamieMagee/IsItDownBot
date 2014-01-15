@@ -100,36 +100,36 @@ COMRE = re.compile('/u/' + username +' (.*)', re.IGNORECASE)
 
 print '[*] Logging in as %s...' % username
 r.login(username, password)
-print '[*] Login successful...\n'
+print '[*] Login successful...'
 
 while True:
-  subreddit = r.get_subreddit('all')
+  subreddit = r.get_subreddit('test+jammie1+botwatch+adviceanimals+AskReddit+aww+bestof+books+earthporn+explainlikeimfive+funny+gaming+gifs+IAmA+movies+music+news+pics+science+technology+television+todayilearned+videos+worldnews+wtf')
   subreddit_comments = subreddit.get_comments()
 
-  print '[*] Getting comments...\n'
+  print '[*] Getting comments...'
 
   for comment in subreddit_comments:
-    answered = isDone(comment)
-    if COMRE.search(comment.body) and comment.id not in already_done:
-      u = Url(COMRE.search(comment.body).group(1))
-      if u.missingdomain():
-        print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
-        reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
-        already_done.append(comment.id)
-      else:
-        try:
-          response = urllib2.urlopen(u.domain).code
-        except urllib2.URLError:
+    if COMRE.search(comment.body):
+      if not isDone(comment):
+        u = Url(COMRE.search(comment.body).group(1))
+        if u.missingdomain():
           print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
           reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
           already_done.append(comment.id)
         else:
-          if valid_response_code(response):
-            print("It's just you. " + u.domain + " is up.")
-            reply("It's just you. " + u.domain + " is up." + FOOTER, comment)
+          try:
+            response = urllib2.urlopen(u.domain).code
+          except urllib2.URLError:
+            print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
+            reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
             already_done.append(comment.id)
           else:
-            print("It's not just you! " + u.domain + " looks down from here.")
-            reply("It's not just you! " + u.domain + " looks down from here." + FOOTER, comment)
-            already_done.append(comment.id)
+            if valid_response_code(response):
+              print("It's just you. " + u.domain + " is up.")
+              reply("It's just you. " + u.domain + " is up." + FOOTER, comment)
+              already_done.append(comment.id)
+            else:
+              print("It's not just you! " + u.domain + " looks down from here.")
+              reply("It's not just you! " + u.domain + " looks down from here." + FOOTER, comment)
+              already_done.append(comment.id)
   time.sleep(2)

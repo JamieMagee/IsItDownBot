@@ -103,12 +103,9 @@ r.login(username, password)
 print '[*] Login successful...'
 
 while True:
-  subreddit = r.get_subreddit('test+jammie1+botwatch')
-  subreddit_comments = subreddit.get_comments()
-
   print '[*] Getting comments...'
 
-  for comment in subreddit_comments:
+  for comment in praw.helpers.comment_stream(r,'all', limit = None):
     if COMRE.search(comment.body):
       if not isDone(comment):
         u = Url(COMRE.search(comment.body).group(1))

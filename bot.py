@@ -2,6 +2,7 @@ import praw, urllib2, re, cgi, ConfigParser, time, os, pickle, atexit
 
 HTTPRE = re.compile('http[s]?://', re.IGNORECASE)
 DOMRE = re.compile('\.\w{2,20}', re.IGNORECASE)
+BLACKLIST = ['LE_TROLLFACEXD']
 
 FOOTER = '''
 
@@ -114,7 +115,7 @@ while True:
     print '[*] Getting comments...'
 
     for comment in praw.helpers.comment_stream(r, 'all', limit=None):
-        if COMRE.search(comment.body):
+        if COMRE.search(comment.body) and comment.author.name not in BLACKLIST:
             if not isdone(comment):
                 u = Url(COMRE.search(comment.body).group(1))
                 if u.missingdomain():

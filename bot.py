@@ -2,7 +2,7 @@ import praw, urllib2, re, cgi, ConfigParser, time, os, pickle, atexit
 
 HTTPRE = re.compile('http[s]?://', re.IGNORECASE)
 DOMRE = re.compile('\.\w{2,20}', re.IGNORECASE)
-BLACKLIST = ['LE_TROLLFACEXD']
+BLACKLIST = ['LE_TROLLFACEXD', 'figuratively_hilter']
 
 FOOTER = '''
 

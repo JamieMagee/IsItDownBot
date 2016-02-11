@@ -124,28 +124,25 @@ print('[*] Login successful...')
 while True:
     print('[*] Getting comments...')
 
-    for comment in praw.helpers.comment_stream(r, 'all', limit=None):
-        if COMRE.search(comment.body) and comment.author.name not in BLACKLIST:
-            if not isdone(comment):
-                u = Url(COMRE.search(comment.body).group(1))
-                if u.missingdomain():
+    for message in r.get_mentions():
+        if COMRE.search(message.body) and message.author.name not in BLACKLIST and not isdone(message):
+            u = Url(COMRE.search(message.body).group(1))
+            if u.missingdomain():
+                print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
+                reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, message)
+            else:
+                try:
+                    response = urllib.request.urlopen(u.domain).code
+                except urllib.error.URLError:
                     print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
-                    reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
-                    already_done.append(comment.id)
+                    reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, message)
                 else:
-                    try:
-                        response = urllib.request.urlopen(u.domain).code
-                    except urllib.error.URLError:
-                        print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
-                        reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
-                        already_done.append(comment.id)
+                    if valid_response_code(response):
+                        print("It's just you. " + u.domain + " is up.")
+                        reply("It's just you. " + u.domain + " is up." + FOOTER, message)
                     else:
-                        if valid_response_code(response):
-                            print("It's just you. " + u.domain + " is up.")
-                            reply("It's just you. " + u.domain + " is up." + FOOTER, comment)
-                            already_done.append(comment.id)
-                        else:
-                            print("It's not just you! " + u.domain + " looks down from here.")
-                            reply("It's not just you! " + u.domain + " looks down from here." + FOOTER, comment)
-                            already_done.append(comment.id)
+                        print("It's not just you! " + u.domain + " looks down from here.")
+                        reply("It's not just you! " + u.domain + " looks down from here." + FOOTER, message)
+        message.mark_as_read()
+        already_done.append(message.id)
     time.sleep(2)

@@ -1,4 +1,14 @@
-import praw, urllib2, re, cgi, ConfigParser, time, os, pickle, atexit
+import atexit
+import html
+import configparser
+import os
+import pickle
+import re
+import time
+import urllib.error
+import urllib.request
+
+import praw
 
 HTTPRE = re.compile('http[s]?://', re.IGNORECASE)
 DOMRE = re.compile('\.\w{2,20}', re.IGNORECASE)
@@ -46,10 +56,10 @@ def reply(text, comment):
             comment.reply(text)
             break
         except praw.errors.RateLimitExceeded as error:
-            print ("Doing too much, sleeping for " + str(error.sleep_time))
+            print("Doing too much, sleeping for " + str(error.sleep_time))
             time.sleep(error.sleep_time)
         except Exception as e:
-            print ("Exception occurred while replying: " + str(e))
+            print("Exception occurred while replying: " + str(e))
             time.sleep(3)
 
 
@@ -63,7 +73,7 @@ class Url:
 
     @staticmethod
     def clean_url(domain):
-        domain = cgi.escape(domain)
+        domain = html.escape(domain)
         domain.encode("utf-8")
 
         if HTTPRE.match(domain) is None:
@@ -97,7 +107,7 @@ fileOpened = True
 r = praw.Reddit('/u/IsItDownBot by /u/Jammie1')
 
 if os.path.isfile('settings.cfg'):
-    config = ConfigParser.ConfigParser()
+    config = configparser.ConfigParser(interpolation=None)
     config.read('settings.cfg')
     username = config.get('auth', 'username')
     password = config.get('auth', 'password')
@@ -107,12 +117,12 @@ else:
 
 COMRE = re.compile('/u/' + username + ' (.*)', re.IGNORECASE)
 
-print '[*] Logging in as %s...' % username
+print('[*] Logging in as %s...' % username)
 r.login(username, password)
-print '[*] Login successful...'
+print('[*] Login successful...')
 
 while True:
-    print '[*] Getting comments...'
+    print('[*] Getting comments...')
 
     for comment in praw.helpers.comment_stream(r, 'all', limit=None):
         if COMRE.search(comment.body) and comment.author.name not in BLACKLIST:
@@ -124,8 +134,8 @@ while True:
                     already_done.append(comment.id)
                 else:
                     try:
-                        response = urllib2.urlopen(u.domain).code
-                    except urllib2.URLError:
+                        response = urllib.request.urlopen(u.domain).code
+                    except urllib.error.URLError:
                         print("Huh? " + u.domain + " doesn't look like a site on the interwho.")
                         reply("Huh? " + u.domain + " doesn't look like a site on the interwho." + FOOTER, comment)
                         already_done.append(comment.id)

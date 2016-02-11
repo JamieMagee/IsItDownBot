@@ -8,4 +8,4 @@ See the "LICENSE" file in the source code. Included libraries are licensed under
 
 # Author
 
-[Jamie Magee](http://jamiemagee.co.uk)
+[Jamie Magee](https://jamiemagee.co.uk)
